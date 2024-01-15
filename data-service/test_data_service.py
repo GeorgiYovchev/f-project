@@ -23,16 +23,16 @@ class DataServiceTestCase(unittest.TestCase):
     def test_store_data(self):
         # Test storing data
         response = self.app.post('/store', 
-                                 data=json.dumps({"user": "testuser", "message": "Hello World"}),
-                                 content_type='application/json')
+        data=json.dumps({"user": "testuser", "message": "Hello World"}),
+        content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIn('Data stored', response.get_json()['message'])
 
     def test_retrieve_data(self):
         # First, store some data
         self.app.post('/store', 
-                      data=json.dumps({"user": "testuser", "message": "Hello World"}),
-                      content_type='application/json')
+        data=json.dumps({"user": "testuser", "message": "Hello World"}),
+        content_type='application/json')
 
         # Then retrieve it
         response = self.app.get('/retrieve', query_string={'user': 'testuser'})

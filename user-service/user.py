@@ -43,7 +43,7 @@ def login():
     return jsonify({"message": "Invalid credentials"}), 401
 
 with app.app_context():
-   db.create_all()
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(port=os.environ.get("PORT", 5001), host="0.0.0.0")
