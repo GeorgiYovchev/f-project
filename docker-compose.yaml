@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend-service/.
+    image: frontend_service
+    ports:
+      - "5003:5003"
+    container_name: frontend
+    networks:
+      - python_app
+
+  user:
+    build: ./user-service/.
+    image: user_service
+    ports:
+      - "5001:5001"
+    container_name: user
+    networks:
+      - python_app
+
+  data:
+    build: ./data-service/.
+    image: data_service
+    ports:
+      - "5002:5002"
+    container_name: data
+    networks:
+      - python_app
+
+networks:
+    python_app:
+      name: python_app
+      driver: bridge
