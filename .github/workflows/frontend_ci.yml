@@ -1,0 +1,22 @@
+name: CI Pipeline Frontend Service
+
+on:
+  push:
+   branches:
+     - main
+
+jobs:
+  editorconfig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: check if editorconfig exists
+        if: ${{ hashFiles('.editorconfig') == '' }}
+        run: exit 'editorconfig does not exist.'
+
+      - name: Add checker
+        uses: editorconfig-checker/action-editorconfig-checker@main
+
+      - name: Run checker
+        run: editorconfig-checker
