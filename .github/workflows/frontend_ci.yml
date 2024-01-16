@@ -3,7 +3,9 @@ name: CI Pipeline Frontend-Service
 on:
   push:
     paths:
-      - './app/frontend-service/**' 
+      - 'app/frontend-service/**' 
+      - 'app/frontend-service/**.py'
+      - 'app/frontend-service/templates/**.html'
 
 jobs:
   editorconfig:
@@ -51,7 +53,7 @@ jobs:
           python-version: 3.11
 
       - name: Install Requirements
-        working-directory: ./frontend-service
+        working-directory: ./app/frontend-service
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
@@ -101,8 +103,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend-service
-          file: ./frontend-service/Dockerfile
+          context: ./app/frontend-service
+          file: ./app/frontend-service/Dockerfile
           push: true
           tags: '${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:${{ github.sha }}'
           platforms: linux/amd64, linux/arm64
