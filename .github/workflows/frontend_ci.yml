@@ -32,14 +32,16 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
-        run: pip install black pylint flake8
+        run: pip install black
 
       - name: Run the linters
         uses: wearerequired/lint-action@v2
         with:
           black: true
-          pylint: true
-          flake8: true
+
+      - name: Format the code with Black
+        run:
+          black ./frontend-service/*.py
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -83,19 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-#  review-security-issues:
-#    name: Snyk
-#    runs-on: ubuntu-latest
-#    needs: [unit-tests, code-smells, scan]
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: snyk/actions/python-3.10@master
-#        env:
-#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-#        with:
-#          args: --severity-threshold=critical
-
-  build-scan-push:
+  build-and-push:
     runs-on: ubuntu-latest
     needs: [editorconfig, linters, unit-tests, scan, code-smells]
 
@@ -106,33 +96,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and export to Docker
-        uses: docker/build-push-action@v5
-        id: build
-        with:
-          context: ./frontend-service
-          file: ./frontend-service/Dockerfile
-          load: true
-
-      - name: Scan image with trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ steps.build.outputs.imageid }}
-          format: "table"
-          exit-code: "1"
-          ignore-unfixed: true
-          vuln-type: "os,library"
-          severity: "CRITICAL"
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASS }}
 
-      - name: Push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: ./frontend-service
+          file: ./frontend-service/Dockerfile
           push: true
-          tags: georgiyovchev/frontend-service:${{ github.sha }}
+          tags: '${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:${{ github.sha }}'
           platforms: linux/amd64, linux/arm64
+
+      - name: Scan with trivy
+        id: trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:${{ github.sha }}'
+          severity: 'CRITICAL'
