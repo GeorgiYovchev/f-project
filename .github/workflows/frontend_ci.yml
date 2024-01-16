@@ -2,8 +2,8 @@ name: CI Pipeline Frontend Service
 
 on:
   push:
-   branches:
-     - main
+    paths:
+      - './frontend-service/**' 
 
 jobs:
   editorconfig:
@@ -85,7 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  build-and-push:
+  build-push-test:
     runs-on: ubuntu-latest
     needs: [editorconfig, linters, unit-tests, scan, code-smells]
 
