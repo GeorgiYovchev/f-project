@@ -19,4 +19,24 @@ jobs:
         uses: editorconfig-checker/action-editorconfig-checker@main
 
       - name: Run checker
-        run: editorconfig-checker
+        run: editorconfig-checker      
+
+  linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: pip install black pylint flake8
+
+      - name: Run the linters
+        uses: wearerequired/lint-action@v2
+        with:
+          black: true
+          pylint: true
+          flake8: true
