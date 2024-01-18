@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   frontend:
-    build: ./frontend-service/.
+    build: ./app/frontend-service/.
     image: frontend_service
     ports:
       - "5003:5003"
@@ -10,7 +10,7 @@ services:
       - python_app
 
   user:
-    build: ./user-service/.
+    build: ./app/user-service/.
     image: user_service
     ports:
       - "5001:5001"
@@ -19,7 +19,7 @@ services:
       - python_app
 
   data:
-    build: ./data-service/.
+    build: ./app/data-service/.
     image: data_service
     ports:
       - "5002:5002"
