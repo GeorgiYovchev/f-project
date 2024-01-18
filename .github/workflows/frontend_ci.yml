@@ -68,9 +68,12 @@ jobs:
     needs: [editorconfig, linters, unit-tests]
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTIONS_STEP_DEBUG: true
 
   code-smells:
     name: SonarCloud
