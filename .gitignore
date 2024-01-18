@@ -1,0 +1,15 @@
+.env
+__pycache__
+**/.terraform/*
+*.auto.tfvars
+*.tfoverride
+.envrc
+.terraformrc
+terraform.rc
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.pem
+*.key
+*.pub
