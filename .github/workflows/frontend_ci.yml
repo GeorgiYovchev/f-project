@@ -148,9 +148,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform Output
-        id: terraform_output
-        run: echo "::set-output name=SERVER_IP::$(terraform output -raw server_ip)"
+      - name: Output Server IP
+        run: |
+          echo "SERVER_IP=$(terraform output -raw server_ip)" >> $GITHUB_ENV
+        working-directory: ./terraform
   
   configure-vm:
     runs-on: ubuntu-latest
@@ -164,3 +165,10 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+      - name: 
+        run: |
+          ansible-playbook -i "${{ env.SERVER_IP }}," configuration.yml
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
