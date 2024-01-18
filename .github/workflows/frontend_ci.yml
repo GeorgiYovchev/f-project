@@ -1,4 +1,4 @@
-name: CI Pipeline Frontend-Service
+name: Pipeline Frontend-Service
 
 on:
   push:
@@ -168,7 +168,7 @@ jobs:
 
       - name: 
         run: |
-          ansible-playbook -i "${{ env.SERVER_IP }}," configuration.yml
+          ansible-playbook -i "${{ env.SERVER_IP }}," ./ansible/configuration.yml
         env:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
