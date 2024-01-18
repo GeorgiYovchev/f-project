@@ -1,0 +1,93 @@
+- hosts: all
+  become: yes
+  vars:
+    docker_apt_key_url: https://download.docker.com/linux/ubuntu/gpg
+    docker_apt_repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    docker_packages:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+    common_packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    kubernetes_packages:
+      - kubelet 
+      - kubeadm 
+      - kubectl
+    kubernetes_apt_key_url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    kubernetes_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    docker_user: georgi
+    node_ip: "192.168.49.2"
+
+  tasks:
+    - name: Transfer and execute the script
+      ansible.builtin.script:
+        src: ./sh/conf.sh
+
+    - name: Install packages that allow apt to be used over HTTPS
+      apt:
+        name: "{{ common_packages }}"
+        state: present
+        update_cache: yes
+
+    - name: Add an apt signing key for Docker
+      apt_key:
+        url: "{{ docker_apt_key_url }}"
+        state: present
+
+    - name: Add apt repository for stable Docker version
+      apt_repository:
+        repo: "{{ docker_apt_repo }}"
+        state: present
+
+    - name: Install Docker and its dependencies
+      apt: 
+        name: "{{ docker_packages }}"
+        state: present
+        update_cache: yes
+      notify:
+        - Restart Docker
+
+    - name: Add user to Docker group
+      user:
+        name: "{{ docker_user }}"
+        group: docker
+
+    - name: Add an apt signing key for Kubernetes
+      apt_key:
+        url: "{{ kubernetes_apt_key_url }}"
+        state: present
+
+    - name: Adding apt repository for Kubernetes
+      apt_repository:
+        repo: "{{ kubernetes_apt_repo }}"
+        state: present
+        filename: kubernetes.list
+
+    - name: Install Kubernetes binaries
+      apt: 
+        name: "{{ kubernetes_packages }}"
+        state: present
+        update_cache: yes
+
+    - name: Configure node IP for kubelet
+      lineinfile:
+        path: /etc/default/kubelet
+        line: "KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}"
+      notify:
+        - Restart kubelet
+
+  handlers:
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted
+
+    - name: Restart kubelet
+      service:
+        name: kubelet
+        daemon_reload: yes
+        state: restarted
