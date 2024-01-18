@@ -170,5 +170,5 @@ jobs:
         run: |
           ansible-playbook -i "${{ env.SERVER_IP }}," configuration.yml
         env:
-          VM_USERNAME: ${{ secrets.USERNAME }}
-          VM_PASSWORD: ${{ secrets.PASSWORD }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
