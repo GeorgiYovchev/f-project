@@ -1,5 +1,6 @@
 - hosts: all
   become: yes
+
   vars:
     docker_apt_key_url: https://download.docker.com/linux/ubuntu/gpg
     docker_apt_repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
@@ -18,14 +19,22 @@
       - kubeadm 
       - kubectl
     kubernetes_apt_key_url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    kubernetes_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+    kubernetes_apt_repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
     docker_user: georgi
     node_ip: "192.168.49.2"
 
   tasks:
-    - name: Transfer and execute the script
-      ansible.builtin.script:
-        src: ./sh/conf.sh
+    - name: Copy configuration script to remote
+      copy:
+        src: ../sh/conf.sh
+        dest: /
+        mode: '0755'
+
+    - name: Execute configuration script
+      command: /conf.sh "{{ USERNAME }}" "{{ PASSWORD }}"
+      environment:
+        USERNAME: "{{ USERNAME }}"
+        PASSWORD: "{{ PASSWORD }}"
 
     - name: Install packages that allow apt to be used over HTTPS
       apt:
@@ -56,16 +65,30 @@
         name: "{{ docker_user }}"
         group: docker
 
-    - name: Add an apt signing key for Kubernetes
-      apt_key:
-        url: "{{ kubernetes_apt_key_url }}"
-        state: present
+    - name: Adding Kubernetes GPG key
+      get_url:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        dest: /tmp/kubernetes-archive-keyring.gpg
+        mode: '0644'
+
+    - name: Check if Kubernetes GPG keyring file exists
+      stat:
+        path: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+      register: kubernetes_keyring
+
+    - name: Dearmor Kubernetes GPG key
+      command: gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg /tmp/kubernetes-archive-keyring.gpg
+      when: not kubernetes_keyring.stat.exists
 
     - name: Adding apt repository for Kubernetes
       apt_repository:
         repo: "{{ kubernetes_apt_repo }}"
         state: present
-        filename: kubernetes.list
+        filename: kubernetes
+        
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
 
     - name: Install Kubernetes binaries
       apt: 

@@ -1,4 +1,4 @@
-resource "hcloud_server" "f-server" {
+resource "hcloud_server" "the-server" {
   name        = var.name
   image       = var.image
   server_type = var.server_type
@@ -7,5 +7,5 @@ resource "hcloud_server" "f-server" {
 }
 
 output "server_ip" {
-  value = hcloud_server.f-server.ipv4_address
+  value = hcloud_server.the-server.ipv4_address
 }

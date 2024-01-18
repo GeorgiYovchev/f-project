@@ -17,3 +17,22 @@ spec:
         image: georgiyovchev/f_project:frontend
         ports:
         - containerPort: 5003
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        effect: "NoSchedule"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 5003
+      targetPort: 5003
+      nodePort: 30003
+  selector:
+    app: frontend
+

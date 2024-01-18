@@ -9,7 +9,7 @@ variable "hcloud_token" {
 
 variable "name" {
   type    = string
-  default = "f-project"
+  default = "the-server"
 }
 
 variable "image" {
@@ -19,12 +19,12 @@ variable "image" {
 
 variable "server_type" {
   type    = string
-  default = "cx11"
+  default = "cx21"
 }
 
 variable "location" {
   type    = string
-  default = "fsn1"
+  default = "nbg1"
 }
 
 variable "aws_region" {
