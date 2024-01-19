@@ -33,3 +33,26 @@
         path: "/home/{{ new_user }}/.ssh/authorized_keys"
         state: file
         mode: '0600'
+
+    - name: Set ownership of .ssh dir to new_user
+      file:
+        path: "/home/{{ new_user }}/.ssh"
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        recurse: yes
+
+    - name: Set ownership of authorized_keys to new_user
+      file:
+        path: "/home/{{ new_user }}/.ssh/authorized_keys"
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        mode: '0600'
+
+    - name: Allow new_user to exec passwordless
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^{{ new_user }} '
+        line: '{{ new_user }} ALL=(ALL:ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+      become: yes

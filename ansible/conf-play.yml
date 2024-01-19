@@ -5,6 +5,10 @@
   become: yes
 
   tasks:
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: yes
+
     - name: Turn off swap
       command: swapoff -a
 
