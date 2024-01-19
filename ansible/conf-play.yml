@@ -1,0 +1,154 @@
+---
+- name: Kubernetes Setup Playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: Turn off swap
+      command: swapoff -a
+
+    - name: Comment out swap entries in /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: '^([^#].*swap.*)'
+        line: '#\1'
+
+    - name: Set hostname to master-node
+      hostname:
+        name: master-node
+
+    - name: Add master-node to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: '10.0.0.2 master-node'
+        create: yes
+
+    - name: Load overlay and br_netfilter modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - overlay
+        - br_netfilter
+
+    - name: Set sysctl params for Kubernetes
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_set: yes
+        state: present
+        reload: yes
+      loop:
+        - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+        - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+        - { key: 'net.ipv4.ip_forward', value: '1' }
+
+    - name: Reload sysctl settings
+      ansible.builtin.command:
+        cmd: sysctl --system
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Download Kubernetes apt key
+      get_url:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        dest: /tmp/kubernetes-archive-keyring.gpg
+        mode: '0644'
+
+    - name: Ensure /etc/apt/keyrings directory exists
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Dearmor Kubernetes GPG key
+      command: gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg /tmp/kubernetes-archive-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+
+    - name: Add Kubernetes apt repository
+      apt_repository:
+        repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main'
+        filename: kubernetes
+        update_cache: yes
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+          - docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure /etc/containerd directory exists
+      file:
+        path: /etc/containerd
+        state: directory
+
+    - name: Generate containerd config
+      shell: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml
+
+    - name: Update containerd config for SystemdCgroup
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^SystemdCgroup = false'
+        line: 'SystemdCgroup = true'
+
+    - name: Restart containerd
+      systemd:
+        name: containerd
+        state: restarted
+
+    - name: Restart kubelet
+      systemd:
+        name: kubelet
+        state: restarted
+        enabled: yes
+
+    - name: Pull Kubernetes images
+      command: kubeadm config images pull
+
+    - name: Set up kubectl for local admin
+      block:
+        - name: Create .kube directory
+          file:
+            path: "~/.kube"
+            state: directory
+            mode: '0755'
+
+        - name: Copy admin kubeconfig to user's home directory
+          copy:
+            src: /etc/kubernetes/admin.conf
+            dest: "~/.kube/config"
+            remote_src: yes
+            mode: '0644'
+
+    - name: Initialize Kubernetes cluster
+      command: kubeadm init --pod-network-cidr=10.10.0.0/16
+
+    - name: Deploy Calico network plugin
+      block:
+        - name: Apply tigera operator
+          ansible.builtin.command:
+            cmd: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+          ignore_errors: yes
+
+        - name: Modify and apply Calico custom resources
+          ansible.builtin.shell: |
+            curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
+            sed -i 's/cidr: 192\.168\.0\.0\/16/cidr: 10.10.0.0\/16/g' custom-resources.yaml
+            kubectl apply -f custom-resources.yaml
