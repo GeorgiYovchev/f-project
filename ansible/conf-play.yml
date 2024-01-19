@@ -1,7 +1,9 @@
 ---
 - name: Kubernetes Setup Playbook
   hosts: all
+  remote_user: "{{ new_user }}"
   become: yes
+
   tasks:
     - name: Turn off swap
       command: swapoff -a
@@ -122,6 +124,9 @@
     - name: Pull Kubernetes images
       command: kubeadm config images pull
 
+    - name: Initialize Kubernetes cluster
+      command: kubeadm init --pod-network-cidr=10.10.0.0/16
+
     - name: Set up kubectl for local admin
       block:
         - name: Create .kube directory
@@ -136,9 +141,6 @@
             dest: "~/.kube/config"
             remote_src: yes
             mode: '0644'
-
-    - name: Initialize Kubernetes cluster
-      command: kubeadm init --pod-network-cidr=10.10.0.0/16
 
     - name: Deploy Calico network plugin
       block:

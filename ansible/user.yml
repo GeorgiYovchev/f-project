@@ -1,0 +1,35 @@
+- name: Create New User and Setup SSH
+  hosts: all
+  become: yes
+
+  vars:
+    new_user: "{{ USERNAME }}"
+    new_user_password: "{{ PASSWORD }}"
+  
+  tasks:
+    - name: Create new user with sudo privileges
+      user:
+        name: "{{ new_user }}"
+        password: "{{ new_user_password | password_hash('sha512') }}"
+        groups: sudo
+        append: yes
+        create_home: yes
+        shell: /bin/bash
+
+    - name: Ensure .ssh directory exists for new user
+      file:
+        path: "/home/{{ new_user }}/.ssh"
+        state: directory
+        mode: '0700'
+
+    - name: Copy SSH key from root to new user
+      ansible.builtin.command:
+        cmd: cp /root/.ssh/authorized_keys /home/{{ new_user }}/.ssh/authorized_keys
+        creates: /home/{{ new_user }}/.ssh/authorized_keys
+      become: yes
+
+    - name: Ensure correct permissions for authorized_keys
+      file:
+        path: "/home/{{ new_user }}/.ssh/authorized_keys"
+        state: file
+        mode: '0600'
