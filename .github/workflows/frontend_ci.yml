@@ -185,13 +185,13 @@ jobs:
         run: ssh -o StrictHostKeyChecking=no root@${{ needs.building-infrastructure.outputs.server_ip }} "echo SSH connection successful"
         
       - name: Run Ansible Playbook to create user
-        run: ansible-playbook -i "root@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/user.yml --extra-vars "USERNAME=${{ secrets.USERNAME }} PASSWORD=${{ secrets.PASSWORD }}" -vvv     
+        run: ansible-playbook -i "root@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/user-create.yml --extra-vars "USERNAME=${{ secrets.USERNAME }} PASSWORD=${{ secrets.PASSWORD }}" 
         env:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
 
-#      - name: Run Ansible Playbook to konfigure kubernetes
-#        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/conf-play.yml --extra-vars "new_user=${{ secrets.USERNAME }} password=${{ secrets.PASSWORD }}" -vvv
-#        env: 
-#          USERNAME: ${{ secrets.USERNAME }}
-#          PASSWORD: ${{ secrets.PASSWORD }}
+      - name: Run Ansible Playbook to configure kubernetes
+        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/kube-conf.yml --extra-vars "new_user=${{ secrets.USERNAME }} password=${{ secrets.PASSWORD }}"
+        env: 
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}

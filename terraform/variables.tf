@@ -9,7 +9,7 @@ variable "hcloud_token" {
 
 variable "name" {
   type    = string
-  default = "the-server"
+  default = "the-node"
 }
 
 variable "image" {

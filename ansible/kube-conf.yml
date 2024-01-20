@@ -1,0 +1,44 @@
+---
+- name: Kubernetes Setup
+  hosts: all
+  remote_user: georgi
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+  
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: yes
+
+- name: Install and Set Up k3s
+  hosts: your_target_hosts
+  become: yes
+  tasks:
+    - name: Install k3s
+      ansible.builtin.shell:
+        cmd: "curl -sfL https://get.k3s.io | sh -"
+      args:
+        executable: /bin/bash
+      register: install_k3s
+
+    - name: Check k3s service status
+      ansible.builtin.systemd:
+        name: k3s
+        state: started
+      register: k3s_status
+      failed_when: k3s_status.status.ActiveState != 'active'
+
+    - name: Change permissions of k3s.yaml
+      ansible.builtin.file:
+        path: /etc/rancher/k3s/k3s.yaml
+        mode: '0644'
+      when: k3s_status.status.ActiveState == 'active'
+
+    - name: Change owner of k3s.yaml to the user
+      ansible.builtin.file:
+        path: /etc/rancher/k3s/k3s.yaml
+        owner: "{{ new_user }}"
+      when: k3s_status.status.ActiveState == 'active'
