@@ -1,7 +1,7 @@
 ---
 - name: Kubernetes Setup
   hosts: all
-  remote_user: georgi
+  remote_user: "{{ new_user }}"
   become: yes
 
   tasks:
@@ -13,10 +13,6 @@
       ansible.builtin.apt:
         upgrade: yes
 
-- name: Install and Set Up k3s
-  hosts: your_target_hosts
-  become: yes
-  tasks:
     - name: Install k3s
       ansible.builtin.shell:
         cmd: "curl -sfL https://get.k3s.io | sh -"
