@@ -191,7 +191,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
 
       - name: Run Ansible Playbook to configure kubernetes
-        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/kube-conf.yml --extra-vars "new_user=${{ secrets.USERNAME }} password=${{ secrets.PASSWORD }}"
+        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa --extra-vars "new_user=${{ secrets.USERNAME }} password=${{ secrets.PASSWORD }}" -vvv
         env: 
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
