@@ -15,14 +15,26 @@
         path: "{{ local_manifest_path }}/kubernetes"
         state: directory
 
-    - name: Fetch Kubernetes manifest and update image
+    - name: Fetch Kubernetes manifest
+      ansible.builtin.get_url:
+        url: "{{ app_manifest_path }}"
+        dest: "{{ local_manifest_path }}/{{ file_name }}"
+        force: yes
+
+    - name: Update image in Kubernetes manifest
+      ansible.builtin.lineinfile:
+        path: "{{ local_manifest_path }}/{{ file_name }}"
+        regexp: 'image: georgiyovchev/frontend-service:[^ ]+'
+        line: 'image: georgiyovchev/frontend-service:{{ image_tag }}'
+
+    - name: Apply Kubernetes manifest
       ansible.builtin.shell:
-        cmd: >
-          curl -sL "{{ app_manifest_path }}" |
-          sed "s|image:.*|image: {{ image_tag }}|" |
-          kubectl apply -f "{{ file_name }}" --kubeconfig "{{ kube_config_path }}"
-      
-#    - name: Apply Kubernetes manifest
+        cmd: "kubectl apply -f {{ local_manifest_path }}/{{ file_name }} --kubeconfig {{ kube_config_path }}"
+
+
+#    - name: Fetch Kubernetes manifest and update image
 #      ansible.builtin.shell:
-#        cmd: "kubectl apply -f {{ local_manifest_path }}/kubernetes/{{ file_name }} --kubeconfig {{ kube_config_path }}"
-#
+#        cmd: >
+#          curl -sL "{{ app_manifest_path }}" |
+#          sed "s|georgiyovchev/frontend-service:[^ ]*|georgiyovchev/frontend-service:{{ image_tag | quote }}|" > "{{ local_manifest_path }}/{{ file_name }}" &&
+#          kubectl apply -f "{{ local_manifest_path }}/{{ file_name }}" --kubeconfig "{{ kube_config_path }}"
