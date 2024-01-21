@@ -13,11 +13,18 @@
       ansible.builtin.apt:
         upgrade: yes
 
+    - name: Check if k3s is installed
+      ansible.builtin.command:
+        cmd: systemctl is-active --quiet k3s
+      register: k3s_installed
+      ignore_errors: yes
+
     - name: Install k3s
       ansible.builtin.shell:
         cmd: "curl -sfL https://get.k3s.io | sh -"
       args:
         executable: /bin/bash
+      when: k3s_installed is failed
       register: install_k3s
 
     - name: Check k3s service status
