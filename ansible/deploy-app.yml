@@ -1,0 +1,17 @@
+- name: Deploying the APP
+  hosts: k3s_cluster
+  remote_user: "{{ new_user }}"
+  become: yes
+  
+  vars:
+    kube_config_path: "/etc/rancher/k3s/k3s.yaml"
+    app_manifest_path: "./kubernetes/frontend-deploy.yaml"
+    image_tag: "{{ image_tag }}"
+
+  tasks:
+    - name: Apply Kubernetes YML
+      kubernetes.core.k8s: 
+        kubeconfig: "{{ kube_config_path }}"
+        state: present
+        src: "{{ kube_manifest_local_path }}"
+
