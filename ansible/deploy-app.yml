@@ -5,7 +5,7 @@
   
   vars:
     kube_config_path: "/etc/rancher/k3s/k3s.yaml"
-    app_manifest_path: "../kubernetes/frontend-deploy.yaml"
+    app_manifest_path: "https://github.com/GeorgiYovchev/f-project-test/blob/main/kubernetes/frontend-deploy.yaml"
     local_manifest_path: "/home/{{ new_user }}"
     file_name: "frontend-deploy.yaml"
 
@@ -15,11 +15,14 @@
         path: "{{ local_manifest_path }}/kubernetes"
         state: directory
 
-    - name: Copy the manifest localy
-      copy:
-        src: "{{ app_manifest_path }}"
-        dest: "{{ local_manifest_path }}/kubernetes"
-      
-    - name: Apply Kubernetes manifest
+    - name: Fetch Kubernetes manifest and update image
       ansible.builtin.shell:
-        cmd: "kubectl apply -f {{ local_manifest_path }}/kubernetes/{{ file_name }} --kubeconfig {{ kube_config_path }}"
+        cmd: >
+          curl -sL "{{ app_manifest_path }}" |
+          sed "s|image:.*|image: {{ image_tag }}|" |
+          kubectl apply -f "{{ file_name }}" --kubeconfig "{{ kube_config_path }}"
+      
+#    - name: Apply Kubernetes manifest
+#      ansible.builtin.shell:
+#        cmd: "kubectl apply -f {{ local_manifest_path }}/kubernetes/{{ file_name }} --kubeconfig {{ kube_config_path }}"
+#
