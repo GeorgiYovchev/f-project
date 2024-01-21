@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: georgiyovchev/frontend-service:{{ image_tag }}
+        image: georgiyovchev/frontend-service:latest
         ports:
         - containerPort: 5003
       tolerations:
@@ -35,4 +35,3 @@ spec:
       nodePort: 30003
   selector:
     app: frontend
-

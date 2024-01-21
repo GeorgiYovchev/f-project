@@ -45,3 +45,15 @@
         path: /etc/rancher/k3s/k3s.yaml
         owner: "{{ new_user }}"
       when: k3s_status.status.ActiveState == 'active'
+
+    - name:
+      become: yes
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+        update_cache: yes
+
+    - name:
+      ansible.builtin.apt:
+        name: kubernetes
+        state: present

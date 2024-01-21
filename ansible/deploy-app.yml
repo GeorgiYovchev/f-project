@@ -5,13 +5,21 @@
   
   vars:
     kube_config_path: "/etc/rancher/k3s/k3s.yaml"
-    app_manifest_path: "./kubernetes/frontend-deploy.yaml"
-    image_tag: "{{ image_tag }}"
+    app_manifest_path: "../kubernetes/frontend-deploy.yaml"
+    local_manifest_path: "/home/{{ new_user }}"
+    file_name: "frontend-deploy.yaml"
 
   tasks:
-    - name: Apply Kubernetes YML
-      kubernetes.core.k8s: 
-        kubeconfig: "{{ kube_config_path }}"
-        state: present
-        src: "{{ app_manifest_path }}"
+    - name: Creates ops folder
+      ansible.builtin.file:
+        path: "{{ local_manifest_path }}/kubernetes"
+        state: directory
 
+    - name: Copy the manifest localy
+      copy:
+        src: "{{ app_manifest_path }}"
+        dest: "{{ local_manifest_path }}/kubernetes"
+      
+    - name: Apply Kubernetes manifest
+      ansible.builtin.shell:
+        cmd: "kubectl apply -f {{ local_manifest_path }}/kubernetes/{{ file_name }} --kubeconfig {{ kube_config_path }}"
