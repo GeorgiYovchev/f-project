@@ -216,6 +216,5 @@ jobs:
         run: ssh -o StrictHostKeyChecking=no root@${{ needs.building-infrastructure.outputs.server_ip }} "echo SSH connection successful"
 
       - name: Deploy App to Kubernetes
-        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/deploy-app.yml
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/deploy-app.yml -e "image_tag=${{ github.sha }}"
+        
