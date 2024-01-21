@@ -1,5 +1,5 @@
 - name: Deploying the APP
-  hosts: k3s_cluster
+  hosts: all
   remote_user: "{{ new_user }}"
   become: yes
   
@@ -13,5 +13,5 @@
       kubernetes.core.k8s: 
         kubeconfig: "{{ kube_config_path }}"
         state: present
-        src: "{{ kube_manifest_local_path }}"
+        src: "{{ app_manifest_path }}"
 
