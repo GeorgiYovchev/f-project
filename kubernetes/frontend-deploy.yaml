@@ -21,7 +21,6 @@ spec:
       - key: "node-role.kubernetes.io/control-plane"
         effect: "NoSchedule"
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
