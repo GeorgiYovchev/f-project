@@ -5,7 +5,7 @@
   
   vars:
     kube_config_path: "/etc/rancher/k3s/k3s.yaml"
-    app_manifest_path: "https://github.com/GeorgiYovchev/f-project-test/blob/main/kubernetes/frontend-deploy.yaml"
+    app_manifest_path: "https://raw.githubusercontent.com/GeorgiYovchev/f-project-test/main/kubernetes/frontend-deploy.yaml"
     local_manifest_path: "/home/{{ new_user }}"
     file_name: "frontend-deploy.yaml"
 
