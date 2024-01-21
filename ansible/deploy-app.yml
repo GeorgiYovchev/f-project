@@ -25,7 +25,7 @@
       ansible.builtin.lineinfile:
         path: "{{ local_manifest_path }}/{{ file_name }}"
         regexp: 'image: georgiyovchev/frontend-service:[^ ]+'
-        line: 'image: georgiyovchev/frontend-service:{{ image_tag }}'
+        line: '        image: georgiyovchev/frontend-service:{{ image_tag }}'
 
     - name: Apply Kubernetes manifest
       ansible.builtin.shell:
