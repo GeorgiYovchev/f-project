@@ -30,3 +30,4 @@
     - name: Apply Kubernetes manifest
       ansible.builtin.shell:
         cmd: "kubectl apply -f {{ local_manifest_path }}/{{ file_name }} --kubeconfig {{ kube_config_path }}"
+        

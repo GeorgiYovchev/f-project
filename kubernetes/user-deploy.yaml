@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
       - name: user
-        image: georgiyovchev/f_project:user
+        image: georgiyovchev/user-service:tag
         ports:
         - containerPort: 5001
       tolerations:
       - key: "node-role.kubernetes.io/control-plane"
         effect: "NoSchedule"
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

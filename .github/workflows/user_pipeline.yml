@@ -3,11 +3,11 @@ name: Pipeline Data-Service
 on:
   push:
     paths:
-      - 'app/data-service/**'
-      - 'app/data-service/**.py'
-      - 'kubernetes/data-deploy.**'
-      - '.github/workflows/data_pipeline.**'
-      - 'ansible/deploy-data.**'
+      - 'app/user-service/**'
+      - 'app/user-service/**.py'
+      - 'kubernetes/user-deploy.**'
+      - '.github/workflows/user_pipeline.**'
+      - 'ansible/deploy-user.**'
 
 jobs:
   editorconfig:
@@ -57,12 +57,12 @@ jobs:
 #      - name: Install Requirements
 #        working-directory: ./app/data-service
 #        run: |
-#          python3 -m pip install --upgrade pip
-#          python3 -m pip install -r requirements.txt
+#          python -m pip install --upgrade pip
+#          python -m pip install -r requirements.txt
 #
 #      - name: Unit Test
-#        working-directory: ./app/data-service
-#        run: python3 -m unittest test_data_service.py
+#        working-directory: ./app/user-service
+#        run: python -m unittest test_data_service.py
 
   scan:
     name: gitleaks
@@ -108,17 +108,17 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./app/data-service
-          file: ./app/data-service/Dockerfile
+          context: ./app/user-service
+          file: ./app/user-service/Dockerfile
           push: true
-          tags: '${{ secrets.DOCKERHUB_USERNAME }}/data-service:${{ github.sha }}'
+          tags: '${{ secrets.DOCKERHUB_USERNAME }}/user-service:${{ github.sha }}'
           platforms: linux/amd64
 
       - name: Scan with trivy
         id: trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/data-service:${{ github.sha }}'
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/user-service:${{ github.sha }}'
           severity: 'CRITICAL'
 
   building-infrastructure:
@@ -218,4 +218,4 @@ jobs:
         run: ssh -o StrictHostKeyChecking=no root@${{ needs.building-infrastructure.outputs.server_ip }} "echo SSH connection successful"
 
       - name: Deploy App to Kubernetes
-        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/deploy-data.yml --extra-vars "image_tag=${{ github.sha }} new_user=${{ secrets.USERNAME }}"
+        run: ansible-playbook -i "${{ secrets.USERNAME }}@${{ needs.building-infrastructure.outputs.server_ip }}," --private-key ~/.ssh/id_rsa ./ansible/deploy-user.yml --extra-vars "image_tag=${{ github.sha }} new_user=${{ secrets.USERNAME }}"

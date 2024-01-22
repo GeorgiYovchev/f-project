@@ -5,9 +5,9 @@
   
   vars:
     kube_config_path: "/etc/rancher/k3s/k3s.yaml"
-    app_manifest_path: "https://raw.githubusercontent.com/GeorgiYovchev/f-project-test/main/kubernetes/data-deploy.yaml"
+    app_manifest_path: "https://raw.githubusercontent.com/GeorgiYovchev/f-project-test/main/kubernetes/user-deploy.yaml"
     local_manifest_path: "/home/{{ new_user }}"
-    file_name: "data-deploy.yaml"
+    file_name: "user-deploy.yaml"
 
   tasks:
     - name: Creates ops folder
@@ -24,8 +24,8 @@
     - name: Update image in Kubernetes manifest
       ansible.builtin.lineinfile:
         path: "{{ local_manifest_path }}/{{ file_name }}"
-        regexp: 'image: georgiyovchev/data-service:[^ ]+'
-        line: '        image: georgiyovchev/data-service:{{ image_tag }}'
+        regexp: 'image: georgiyovchev/user-service:[^ ]+'
+        line: '        image: georgiyovchev/user-service:{{ image_tag }}'
 
     - name: Apply Kubernetes manifest
       ansible.builtin.shell:
