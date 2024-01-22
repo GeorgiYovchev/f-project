@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: data
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: data
@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
       - name: data
-        image: georgiyovchev/f_project:data
+        image: georgiyovchev/data-service:tag
         ports:
         - containerPort: 5002
       tolerations:
       - key: "node-role.kubernetes.io/control-plane"
         effect: "NoSchedule"
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

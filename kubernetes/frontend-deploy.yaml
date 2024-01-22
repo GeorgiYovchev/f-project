@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -29,7 +29,7 @@ spec:
   type: LoadBalancer
   ports:
     - name: http
-      port: 5003
+      port: 8888
       targetPort: 5003
       nodePort: 30003
   selector:
