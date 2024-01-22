@@ -44,7 +44,7 @@ jobs:
           black: true
 
 #  unit-tests:
-#    runs-on: ubuntu-latest
+#    runs-on: ubuntu-
 #    needs: [editorconfig, linter]
 #    steps:
 #      - uses: actions/checkout@v4
