@@ -8,7 +8,7 @@ terraform {
     }
 
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 5.32.1"
     }
   }
@@ -24,8 +24,10 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "statebucketfproject1234"
-    key    = "terraform.tfstate"
-    region = "eu-central-1"
-    }
+    bucket         = "statebucketfproject1234"
+    key            = "terraform.tfstate"
+    region         = "eu-central-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
   }
+}

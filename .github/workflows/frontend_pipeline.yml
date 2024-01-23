@@ -6,8 +6,6 @@ on:
       - 'app/frontend-service/**' 
       - 'app/frontend-service/**.py'
       - 'app/frontend-service/templates/**.html'
-      - 'kubernetes/frontend-deploy.**'
-      - 'ansible/deploy-frontend.**'
 
 jobs:
   editorconfig:
@@ -88,7 +86,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  build-push-test:
+  build-push:
     runs-on: ubuntu-latest
     needs: [editorconfig, linter, unit-tests, scan, code-smells]
 
@@ -114,6 +112,10 @@ jobs:
           tags: '${{ secrets.DOCKERHUB_USERNAME }}/frontend-service:${{ github.sha }}'
           platforms: linux/amd64
 
+  security-scan: 
+    runs-on: ubuntu-latest
+    needs: [build-push]
+    steps:
       - name: Scan with trivy
         id: trivy
         uses: aquasecurity/trivy-action@master
@@ -199,7 +201,7 @@ jobs:
 
   deploy-app:
     runs-on: ubuntu-latest
-    needs: [building-infrastructure, configure-vm, build-push-test]
+    needs: [building-infrastructure, configure-vm, build-push, security-scan]
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v4

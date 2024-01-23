@@ -29,8 +29,8 @@ spec:
   type: LoadBalancer
   ports:
     - name: http
-      port: 5003
+      port: 8888
       targetPort: 5003
-      nodePort: 30003
+#      nodePort: 30003
   selector:
     app: frontend
