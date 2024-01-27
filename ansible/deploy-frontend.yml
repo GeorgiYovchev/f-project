@@ -7,27 +7,30 @@
     kube_config_path: "/etc/rancher/k3s/k3s.yaml"
     app_manifest_path: "https://raw.githubusercontent.com/GeorgiYovchev/f-project-test/main/kubernetes/frontend-deploy.yaml"
     local_manifest_path: "/home/{{ new_user }}"
+    local_folder_name: "kubernetes"
     file_name: "frontend-deploy.yaml"
+    ops_folder_path: "{{ local_manifest_path }}/{{ local_folder_name }}"
+    image_frontend: "georgiyovchev/frontend-service"
 
   tasks:
     - name: Creates ops folder
       ansible.builtin.file:
-        path: "{{ local_manifest_path }}/kubernetes"
+        path: "{{ ops_folder_path }}"
         state: directory
 
     - name: Fetch Kubernetes manifest
       ansible.builtin.get_url:
         url: "{{ app_manifest_path }}"
-        dest: "{{ local_manifest_path }}/{{ file_name }}"
+        dest: "{{ ops_folder_path }}/{{ file_name }}"
         force: yes
 
     - name: Update image in Kubernetes manifest
       ansible.builtin.lineinfile:
-        path: "{{ local_manifest_path }}/{{ file_name }}"
-        regexp: 'image: georgiyovchev/frontend-service:[^ ]+'
-        line: '        image: georgiyovchev/frontend-service:{{ image_tag }}'
+        path: "{{ ops_folder_path }}/{{ file_name }}"
+        regexp: 'image: {{ image_frontend }}:[^ ]+'
+        line: '        image: {{ image_frontend }}:{{ image_tag }}'
 
     - name: Apply Kubernetes manifest
       ansible.builtin.shell:
-        cmd: "kubectl apply -f {{ local_manifest_path }}/{{ file_name }} --kubeconfig {{ kube_config_path }}"
+        cmd: "kubectl apply -f {{ ops_folder_path }}/{{ file_name }} --kubeconfig {{ kube_config_path }}"
         
