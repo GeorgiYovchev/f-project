@@ -6,7 +6,6 @@ on:
       - 'app/data-service/**'
       - 'app/data-service/**.py'
       - 'kubernetes/data-deploy.**'
-      - '.github/workflows/data_pipeline.**'
       - 'ansible/deploy-data.**'
 
 jobs:
@@ -43,31 +42,10 @@ jobs:
         with:
           black: true
 
-#  unit-tests:
-#    runs-on: ubuntu-
-#    needs: [editorconfig, linter]
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Set up Python
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: 3.11
-#
-#      - name: Install Requirements
-#        working-directory: ./app/data-service
-#        run: |
-#          python3 -m pip install --upgrade pip
-#          python3 -m pip install -r requirements.txt
-#
-#      - name: Unit Test
-#        working-directory: ./app/data-service
-#        run: python3 -m unittest test_data_service.py
-
   scan:
     name: gitleaks
     runs-on: ubuntu-latest
-    needs: [editorconfig, linter,] #unit-tests
+    needs: [editorconfig, linter,]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -79,7 +57,7 @@ jobs:
 
   code-smells:
     name: sonarcloud
-    needs: [editorconfig, linter] #unit-tests
+    needs: [editorconfig, linter]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 
@@ -90,7 +68,7 @@ jobs:
 
   build-push-test:
     runs-on: ubuntu-latest
-    needs: [editorconfig, linter, scan, code-smells] #unit-tests
+    needs: [editorconfig, linter, scan, code-smells]
 
     steps:
       - name: Checkout the code
