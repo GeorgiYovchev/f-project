@@ -2,7 +2,7 @@
 
 ## Core Services
 
-- **Frontend Service**: Interfaces with users, handling actions like login and data entry, all through Flask.
+- **Frontend Service**: Interfaces with users, handling actions like register, login and data entry, all through Flask.
 
 - **User Service**: Manages user accounts, authentication, and securely stores and retreives data using SQLite.
 
@@ -32,7 +32,6 @@ Before you begin, ensure you have the following installed:
 
 
 2. **Navigate to the Project Directory**:
-   Change into the project directory:
    ```bash
    cd f-project
 
@@ -94,8 +93,6 @@ The Terraform configuration in this stage is designed to set up and manage the c
 - **Resource Definition and Allocation**: Creates cloud resource, such as virtual server as per the project requirements.
 - **Output Information**: Provides essential details like server IP addresses for use in later stages of the pipeline.
 
-This stage sets a solid foundation for the next steps, ensuring that the application has a robust and well-configured infrastructure to run on.
-
 ## Stage 2: Configuring the VM
 
 After the infrastructure is built using Terraform, the next step in our CD process involves configuring the virtual machine (VM) using Ansible. This process is handled by a specific job in the GitHub Actions workflow.
@@ -127,7 +124,7 @@ The second playbook is responsible for setting up Kubernetes (k3s) on the VM. Ma
 
 ## Stage 3: Deploying the Application
 
-The final stage in our CD pipeline is the deployment of the application. This process is automated and orchestrated by GitHub Actions and Ansible, ensuring that the latest version of the application is deployed seamlessly to the Kubernetes cluster.
+The final stage in our CD pipeline is the deployment of the application. This process is automated and orchestrated by GitHub Actions and Ansible.
 
 ### GitHub Actions Workflow for Application Deployment
 
