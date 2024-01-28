@@ -1,4 +1,4 @@
-- name: Deploying the APP
+- name: Deploying the Data Service
   hosts: all
   remote_user: "{{ new_user }}"
   become: yes
