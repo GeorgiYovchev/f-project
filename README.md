@@ -65,3 +65,31 @@ It is triggered on every push to specific paths in the repository, ensuring that
 - **Code Smells Detection (SonarCloud)**: Analyzes the code for potential bugs and smells, aiding in maintaining clean, efficient code.
 - **Build and Push**: Automates the building of the Docker image and pushes it to DockerHub, streamlining deployment.
 - **Docker Image Security Scan (Trivy)**: Scans the Docker image for vulnerabilities, ensuring deployment security.
+
+# Continuous Deployment (CD) Components
+
+## Overview
+
+After the Continuous Integration (CI) process completes, including security testing and Docker image upload to Docker Hub, the workflow continues with Continuous Deployment (CD) pipeline. This pipeline consists of three primary stages: Building Infrastructure, Configuring the VM, and Deploying the Application.
+
+## Stage 1: Building Infrastructure
+
+The first stage of the CD process is crucial as it involves setting up the necessary infrastructure for the application. This process is automated using Terraform within the GitHub Actions workflow.
+
+### GitHub Actions Workflow for Infrastructure
+
+In this stage, the workflow performs several key actions:
+- **Code Checkout**: Retrieves the latest codebase from the repository.
+- **Terraform Setup**: Initializes Terraform with the specified version.
+- **Infrastructure Creation**: Executes Terraform scripts to provision required infrastructure, such as cloud server.
+- **Output Generation**: Outputs crucial information like the server IP address, which is used in subsequent stages.
+
+### Terraform Configuration
+
+The Terraform configuration in this stage is designed to set up and manage the cloud infrastructure. Key aspects include:
+- **Version and Provider Specification**: Defines the required version of Terraform and configures cloud providers (like AWS and Hetzner Cloud).
+- **State Management**: Configures backend for state management, ensuring consistent tracking of infrastructure changes.
+- **Resource Definition and Allocation**: Creates cloud resource, such as virtual server as per the project requirements.
+- **Output Information**: Provides essential details like server IP addresses for use in later stages of the pipeline.
+
+This stage sets a solid foundation for the next steps, ensuring that the application has a robust and well-configured infrastructure to run on.

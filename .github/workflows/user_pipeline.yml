@@ -1,13 +1,7 @@
 name: Pipeline User-Service
 
 on:
-  push:
-    paths:
-      - 'app/user-service/**'
-      - 'app/user-service/**.py'
-      - 'kubernetes/user-deploy.**'
-      - 'ansible/deploy-user.**'
-      - '.github/workflows/user_pipeline.**'
+  workflow_dispatch:
 
 jobs:
   editorconfig:
