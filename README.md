@@ -4,9 +4,9 @@
 
 - **Frontend Service**: Interfaces with users, handling actions like login and data entry, all through Flask.
 
-- **User Service**: Manages user accounts, authentication, and securely stores data using SQLite.
+- **User Service**: Manages user accounts, authentication, and securely stores and retreives data using SQLite.
 
-- **Data Service**: Responsible for storing and retrieving user data, also leveraging SQLite.
+- **Data Service**: Responsible for storing data, also leveraging SQLite.
 
 ## System Design
 
