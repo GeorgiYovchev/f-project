@@ -147,7 +147,7 @@ The Ansible playbook for deploying the application involves several critical ste
 2. **SSH Connection Test**: Verifies the SSH connection to the Kubernetes cluster.
 3. **Running the Ansible Playbook**: Executes the playbook which performs the tasks of fetching, updating, and applying the Kubernetes manifest.
 
-This deployment process ensures that the latest version of the frontend service is deployed to the Kubernetes cluster, making it accessible to end-users. 
+This deployment process ensures that the latest version of the frontend service is deployed to the Kubernetes cluster, making it accessible to end-users.
 
 ## Final Notes: User and Data Services
 
