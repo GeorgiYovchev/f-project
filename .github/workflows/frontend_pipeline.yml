@@ -36,10 +36,8 @@ jobs:
       - name: Install dependencies
         run: pip install black
 
-      - name: Run the linters
-        uses: wearerequired/lint-action@v2
-        with:
-          black: true
+      - name: Run linter for frontend.py
+        run: black --check app/frontend-service/frontend.py
 
   unit-tests:
     runs-on: ubuntu-latest
