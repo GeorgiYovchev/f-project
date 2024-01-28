@@ -1,13 +1,7 @@
 name: Pipeline Data-Service
 
 on:
-  push:
-    paths:
-      - 'app/data-service/**'
-      - 'app/data-service/**.py'
-      - 'kubernetes/data-deploy.**'
-      - 'ansible/deploy-data.**'
-      - '.github/workflows/data_pipeline.**'
+  workflow_dispatch:
 
 jobs:
   editorconfig:
