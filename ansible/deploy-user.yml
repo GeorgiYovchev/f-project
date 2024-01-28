@@ -26,7 +26,7 @@
 
     - name: Update image in Kubernetes manifest
       ansible.builtin.lineinfile:
-        path: "{{ local_manifest_path }}/{{ file_name }}"
+        path: "{{ ops_folder_path }}/{{ file_name }}"
         regexp: 'image: {{ image_user }}:[^ ]+'
         line: '        image: {{ image_user }}:{{ image_tag }}'
 
