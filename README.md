@@ -169,3 +169,7 @@ In addition to the automated pipeline for the frontend service, our application 
 
 - **Application Specificity**: The specific nature of the user and data services, particularly their roles in handling sensitive information, necessitates a more cautious deployment approach.
 - **Controlled Updates**: Manual triggers allow for better control over when and how these services are updated, thereby reducing the risk of disruptions or data integrity issues.
+
+---
+
+If you would like to contribute to this project or you find any issues you think we need to fix please refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
