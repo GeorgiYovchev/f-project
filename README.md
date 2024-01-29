@@ -172,4 +172,4 @@ In addition to the automated pipeline for the frontend service, our application 
 
 ---
 
-If you would like to contribute to this project or you find any issues you think we need to fix please refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
+If you would like to contribute to this project, or if you find any issues that you think need fixing, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file.
