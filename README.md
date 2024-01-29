@@ -85,7 +85,7 @@ In this stage, the workflow performs several key actions:
 - **Infrastructure Creation**: Executes Terraform scripts to provision required infrastructure, such as cloud server.
 - **Output Generation**: Outputs crucial information like the server IP address, which is used in subsequent stages.
 
-### Terraform Configuration
+### [Terraform Configuration](terraform)
 
 The Terraform configuration in this stage is designed to set up and manage the cloud infrastructure. Key aspects include:
 - **Version and Provider Specification**: Defines the required version of Terraform and configures cloud providers (like AWS and Hetzner Cloud).
@@ -105,7 +105,7 @@ The workflow for configuring the VM includes the following steps:
 - **SSH Connection Test**: A test SSH connection is made to ensure proper configuration.
 - **Ansible Playbook Execution**: Two main Ansible playbooks are executed. One for user creation and another for Kubernetes setup.
 
-### Ansible Playbook: User Creation and Setup
+### Ansible Playbook: [User Creation and Setup](ansible/user-create.yml)
 
 The first Ansible playbook focuses on creating a new user on the VM and setting up necessary permissions. Key tasks include:
 - **Creating a New User**: A new user with sudo privileges is created.
@@ -113,7 +113,7 @@ The first Ansible playbook focuses on creating a new user on the VM and setting 
 - **Setting File Permissions**: Ensures correct permissions are set for the SSH directory and files.
 - **Configuring Passwordless Sudo Access**: Allows the new user to execute commands without a password for simplicity and automation.
 
-### Ansible Playbook: Kubernetes Setup
+### Ansible Playbook: [Kubernetes Setup](ansible/kube-conf.yml)
 
 The second playbook is responsible for setting up Kubernetes (k3s) on the VM. Major steps involve:
 - **System Update and Upgrade**: Ensures all system packages are updated.
@@ -133,7 +133,7 @@ The deployment job in GitHub Actions is configured as follows:
 - **SSH Setup**: Establishes an SSH connection to the configured VM.
 - **Deployment Execution**: Runs an Ansible playbook to deploy the application to Kubernetes.
 
-### Ansible Playbook: Deployment to Kubernetes
+### Ansible Playbook: [Deployment to Kubernetes](ansible/deploy-frontend.yml)
 
 The Ansible playbook for deploying the application involves several critical steps:
 - **Creating Operations Folder**: Ensures a directory exists for Kubernetes manifest files.
