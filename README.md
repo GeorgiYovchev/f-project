@@ -13,7 +13,7 @@
 - **Modular Architecture**: Each service focuses on specific functionalities for better scalability and maintenance.
 - **Inter-service Communication**: Achieved via HTTP requests, promoting a decoupled yet cohesive structure.
 
-![APP](app/app_diagram.png)
+![APP](app/app_diagram.jpg)
 
 # Running the Application Locally
 
