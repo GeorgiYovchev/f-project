@@ -48,7 +48,7 @@ Before you begin, ensure you have the following installed:
 
 # CI/CD
 
-In this section, we discuss the main CI/CD Pipeline for the Frontend service.
+In this section, we discuss the main [CI/CD Pipeline](.github/workflows/frontend_pipeline.yml) for the Frontend service.
 
 ![CI/CD Pipeline](.github/workflows/diagram.jpg)
 
