@@ -13,7 +13,7 @@
 - **Modular Architecture**: Each service focuses on specific functionalities for better scalability and maintenance.
 - **Inter-service Communication**: Achieved via HTTP requests, promoting a decoupled yet cohesive structure.
 
-![APP](app/app_diagram.jpg)
+![APP](app/app_diagram.png)
 
 # Running the Application Locally
 
@@ -50,7 +50,7 @@ Before you begin, ensure you have the following installed:
 
 In this section, we discuss the main [CI/CD Pipeline](.github/workflows/frontend_pipeline.yml) for the Frontend service.
 
-![CI/CD Pipeline](.github/workflows/diagram.png)
+![CI/CD Pipeline](.github/workflows/diagram.)
 
 ## Overview
 
